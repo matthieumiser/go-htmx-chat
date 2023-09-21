@@ -86,7 +86,7 @@ func formatAsHTML(msg IncomingMessage) string {
 		return "Invalid HX-Target format"
 	}
 
-	return `<div id="` + hxTarget + `" hx-swap-oob="beforeend"><br>` + msg.Message + `</div>`
+	return `<div class="messages" id="` + hxTarget + `" hx-swap-oob="beforeend"><br>` + msg.Message + `</div>`
 }
 
 func (s *Server) broadcast(b []byte) {
