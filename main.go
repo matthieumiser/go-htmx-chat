@@ -1,20 +1,25 @@
 package main
 
 import (
+	"encoding/json"
 	"html/template"
 	"io"
 	"log"
 	"net/http"
 	"sync"
 
-	"golang.org/x/net/websocket"
-
 	"github.com/gorilla/mux"
+	"golang.org/x/net/websocket"
 )
 
 type Server struct {
 	mu    sync.Mutex
 	conns map[*websocket.Conn]bool
+}
+
+type IncomingMessage struct {
+	Message string                 `json:"message"`
+	Headers map[string]interface{} `json:"HEADERS"`
 }
 
 func main() {
@@ -64,8 +69,24 @@ func (s *Server) readLoop(ws *websocket.Conn) {
 		}
 		msg := buf[:n]
 
-		s.broadcast(msg)
+		var incomingMessage IncomingMessage
+		if err := json.Unmarshal(msg, &incomingMessage); err != nil {
+			log.Println("Error parsing message:", err)
+			continue
+		}
+
+		htmlMessage := formatAsHTML(incomingMessage)
+		s.broadcast([]byte(htmlMessage))
 	}
+}
+
+func formatAsHTML(msg IncomingMessage) string {
+	hxTarget, ok := msg.Headers["HX-Target"].(string)
+	if !ok {
+		return "Invalid HX-Target format"
+	}
+
+	return `<div id="` + hxTarget + `" hx-swap-oob="beforeend"><br>` + msg.Message + `</div>`
 }
 
 func (s *Server) broadcast(b []byte) {
@@ -80,6 +101,5 @@ func (s *Server) broadcast(b []byte) {
 
 func homeRoute(w http.ResponseWriter, r *http.Request) {
 	t := template.Must(template.ParseFiles("templates/index.html"))
-
 	t.Execute(w, nil)
 }

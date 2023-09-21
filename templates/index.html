@@ -5,20 +5,19 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Real-time Message Board</title>
-	<script src="https://unpkg.com/htmx.org@1.6.1"></script>
+	<script src="https://unpkg.com/htmx.org@1.9.5/dist/htmx.min.js"></script>
+	<script src="https://unpkg.com/htmx.org@1.9.5/dist/ext/ws.js"></script>
 	<link rel="stylesheet" href="/static/styles.css">
 </head>
 
 <body>
+	<div class="message-board" hx-ext="ws" ws-connect="/ws">
+		<div id="notifications" hx-swap-oob="beforeend">
 
-	<div class="message-board">
-		<!-- Messages container -->
-		<div id="messages" hx-target="this" hx-swap="beforeend" hx-get="/api/messages" hx-trigger="this">
-			<!-- Messages will be populated here in real-time -->
 		</div>
 
 		<!-- Input form for new messages -->
-		<form hx-post="/api/send-message" hx-swap="none">
+		<form id="form" hx-target="#notifications" ws-send>
 			<input type="text" name="message" placeholder="Type your message..." required>
 			<button type="submit">Send</button>
 		</form>
