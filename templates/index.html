@@ -13,15 +13,20 @@
 <body>
 	<div class="message-board" hx-ext="ws" ws-connect="/ws">
 		<div class="messages" id="notifications" hx-swap-oob="beforeend">
-
 		</div>
 
-		<!-- Input form for new messages -->
-		<form id="form" hx-target="#notifications" ws-send>
+		<form id="messageForm" hx-target="#notifications" ws-send>
 			<input type="text" name="message" placeholder="Type your message..." required>
 			<button type="submit">Send</button>
-		</form>
+		</form>		
 	</div>
 </body>
+<script>
+	document.body.addEventListener('htmx:wsAfterSend', function (event) {
+		if (event.target.id === 'messageForm') {
+			event.target.reset();
+		}
+	});
+</script>
 
 </html>

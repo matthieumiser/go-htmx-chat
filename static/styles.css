@@ -17,15 +17,30 @@ body {
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
 
-.messages div {
-    padding: 10px;
+.message {
+    position: relative;
+    padding: 10px 15px;
     margin: 10px 0;
-    border-radius: 8px;
-    background-color: #e9ecef;
-    align-self: flex-start;
+    border-radius: 15px;
+    background-color: #007bff;
+    color: #ffffff;
+    max-width: 80%;
+    box-shadow: 0 2px 6px rgba(0, 58, 255, 0.2);
 }
 
-#messages {
+.message::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: -10px;
+    width: 10px;
+    height: 20px;
+    background-color: #007bff;
+    border-bottom-left-radius: 15px;
+}
+
+
+#notifications {
     max-height: 400px;
     overflow-y: auto;
     margin-bottom: 20px;
