@@ -41,6 +41,13 @@ func (s *Server) handleWs(ws *websocket.Conn) {
 	s.conns[ws] = true
 	s.mu.Unlock()
 
+	defer func() {
+		s.mu.Lock()
+		delete(s.conns, ws)
+		s.mu.Unlock()
+		log.Println("Connection closed for ", ws.RemoteAddr())
+	}()
+
 	s.readLoop(ws)
 }
 
